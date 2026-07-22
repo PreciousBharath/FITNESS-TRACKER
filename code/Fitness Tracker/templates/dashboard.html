@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            min-height: 100vh;
+            padding-top: 80px;
+            color: #fff;
+        }
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        h2 { color: #fff; text-align: center; margin-bottom: 30px; }
+        .nav-link:hover { color: #0dcaf0 !important; }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="{{ url_for('home') }}">FitnessSys</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('prediction') }}">Predict</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5">
+
+    <h2>Dashboard - {{ session['username'] }}</h2>
+
+    <!-- Charts Only -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="chart-card">
+                <h5 class="text-center">BMI Over Predictions</h5>
+                <canvas id="bmiChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-card">
+                <h5 class="text-center">Fitness Level Distribution</h5>
+                <canvas id="levelChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-card">
+                <h5 class="text-center">Fitness Goal Distribution</h5>
+                <canvas id="goalChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-card">
+                <h5 class="text-center">Recommendation Distribution</h5>
+                <canvas id="recChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Charts JS -->
+<script>
+    const bmiChart = new Chart(document.getElementById('bmiChart'), {
+        type: 'bar',
+        data: {
+            labels: {{ bmi_labels | safe }},
+            datasets: [{
+                label: 'BMI',
+                data: {{ bmi_values | safe }},
+                backgroundColor: 'rgba(13, 202, 240, 0.7)',
+                borderColor: '#0dcaf0',
+                borderWidth: 1
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    const levelChart = new Chart(document.getElementById('levelChart'), {
+        type: 'pie',
+        data: {
+            labels: {{ level_labels | safe }},
+            datasets: [{
+                data: {{ level_counts | safe }},
+                backgroundColor: ['#0dcaf0','#20c997','#ffc107','#6f42c1','#fd7e14']
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    const goalChart = new Chart(document.getElementById('goalChart'), {
+        type: 'pie',
+        data: {
+            labels: {{ goal_labels | safe }},
+            datasets: [{
+                data: {{ goal_counts | safe }},
+                backgroundColor: ['#0dcaf0','#20c997','#ffc107','#6f42c1','#fd7e14']
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    const recChart = new Chart(document.getElementById('recChart'), {
+        type: 'pie',
+        data: {
+            labels: {{ rec_labels | safe }},
+            datasets: [{
+                data: {{ rec_counts | safe }},
+                backgroundColor: ['#0dcaf0','#20c997','#ffc107','#6f42c1','#fd7e14']
+            }]
+        },
+        options: { responsive: true }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
